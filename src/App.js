@@ -214,7 +214,7 @@ class JamCanvas extends React.Component {
 		  canvHeight = window.innerHeight;
     }
 
-    // Infini-Canvas Vars
+    /*/ Infini-Canvas Vars
     var bounds = canvas.getBoundingClientRect();
     var selectedBox = null;
     var panX = 0;
@@ -224,7 +224,7 @@ class JamCanvas extends React.Component {
     var oldMouseX = 0;
     var oldMouseY = 0;
     var mouseHeld = false;
-    var boxArray = [];
+    var boxArray = [];*/
 
     // Events
     document.addEventListener("mousedown", (event) => {
