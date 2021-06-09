@@ -279,6 +279,7 @@ class JamCanvas extends React.Component {
       <div>
         <div id="jamSideBar">
           <div className="colorBox" id="mainColorBox" onClick={() => {
+            // Check if color picker is open or not
             var colorPickerMenu = document.getElementById('colorPickerMenu');
             if (this.state.colorPickerOpen === false) {
               colorPickerMenu.style.visibility = "visible";
