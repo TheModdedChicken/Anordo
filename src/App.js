@@ -126,9 +126,9 @@ class ColorPicker extends React.Component {
     lightnessImage.src = lightnessImg;
     lightnessPicker.width = 150;
     lightnessPicker.height = 150;
-    setTimeout(() => {
+    lightnessImage.addEventListener("load", () => {
       changeColor("#000");
-    },500)
+    })
 
     // Data Vars
     var picking = false;
