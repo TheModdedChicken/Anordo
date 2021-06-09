@@ -128,7 +128,7 @@ class ColorPicker extends React.Component {
     lightnessPicker.height = 150;
     setTimeout(() => {
       changeColor("#000");
-    },100)
+    },500)
 
     // Data Vars
     var picking = false;
