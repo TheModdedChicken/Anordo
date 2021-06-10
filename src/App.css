@@ -228,7 +228,7 @@ input {
   box-shadow: 0px 0px 8px #888888;
 
   width: 380px;
-  height: 280px;
+  height: 220px;
 
   left: 90px;
   top: 15px;
@@ -249,6 +249,11 @@ input {
 
 #huePickerCanv {
   border-radius: 5px;
+}
+
+#alphaPickerSlider {
+  width: 150px;
+  height: 20px;
 }
 
 @keyframes openColorPicker {

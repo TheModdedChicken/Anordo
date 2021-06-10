@@ -128,7 +128,7 @@ class ColorPicker extends React.Component {
     lightnessPicker.width = 150;
     lightnessPicker.height = 150;
     lightnessImage.addEventListener("load", () => {
-      changeColor("#000");
+      changeColor([0,0,0,255]);
     })
 
     // Hue Picker Vars
@@ -158,7 +158,7 @@ class ColorPicker extends React.Component {
     // Events
     lightnessPicker.addEventListener('mousedown', (event) => {
       pickingLightness = true;
-      var pixelData = lightnessPicker.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+      var pixelData = lpCtx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
       latestLightnessPos = {x: event.offsetX, y: event.offsetY};
       setColor(`rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`);
     });
@@ -178,25 +178,26 @@ class ColorPicker extends React.Component {
     function overLightnessPicker (event) {
       if (!pickingLightness) return;
 
-      var pixelData = lightnessPicker.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+      var pixelData = lpCtx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
       setColor(`rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`);
     }
 
     function pickHue (event) {
-      var pixelData1 = huePicker.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
-      changeColor(`rgba(${pixelData1[0]}, ${pixelData1[1]}, ${pixelData1[2]}, ${pixelData1[3]})`);
+      var pixelData1 = hpCtx.getImageData(event.offsetX, event.offsetY, 1, 1).data;
+      changeColor(pixelData1);
 
-      var pixelData2 = lightnessPicker.getContext('2d').getImageData(latestLightnessPos.x, latestLightnessPos.y, 1, 1).data;
+      var pixelData2 = lpCtx.getImageData(latestLightnessPos.x, latestLightnessPos.y, 1, 1).data;
       setColor(`rgba(${pixelData2[0]}, ${pixelData2[1]}, ${pixelData2[2]}, ${pixelData2[3]})`);
     }
 
-    function changeColor (color) {
-      lightnessPicker.getContext('2d').clearRect(0, 0, lightnessPicker.width, lightnessPicker.height);
+    function changeColor (colorArr) {
+      var color = `rgba(${colorArr[0]}, ${colorArr[1]}, ${colorArr[2]}, ${colorArr[3]})`;
+      lpCtx.clearRect(0, 0, lightnessPicker.width, lightnessPicker.height);
       lpCtx.beginPath();
       lpCtx.rect(0, 0, 150, 150);
       lpCtx.fillStyle = color;
       lpCtx.fill();
-      lightnessPicker.getContext('2d').drawImage(lightnessImage, 0, 0, lightnessImage.width, lightnessImage.height);
+      lpCtx.drawImage(lightnessImage, 0, 0, lightnessImage.width, lightnessImage.height);
     }
   }
   componentDidUpdate() {
@@ -355,6 +356,12 @@ class JamCanvas extends React.Component {
   }
   updateDrawingProp(property, data) {
     this.setState({[property]: data});
+
+    if (property === "penColor") {
+      var mainColorBox = document.getElementById('mainColorBox');
+
+      mainColorBox.style.background = this.state.penColor;
+    }
   }
   getStateProp(property) {
     return this.state[property];
