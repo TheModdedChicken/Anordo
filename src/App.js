@@ -114,12 +114,13 @@ class ColorPicker extends React.Component {
       updateDrawingProp: props.callbacks.updateDrawingProp
     }
     this.lightnessPickerRef = createRef(null);
+    this.huePickerRef = createRef(null);
   }
   componentDidMount() {
     // Local Function Vars
     let setColor = this.setColor.bind(this);
 
-    // Color Picker Vars
+    // Lightness Picker Vars
     var lightnessPicker = this.lightnessPickerRef.current;
     var lpCtx = lightnessPicker.getContext('2d');
     let lightnessImage = document.createElement("img");
@@ -130,24 +131,63 @@ class ColorPicker extends React.Component {
       changeColor("#000");
     })
 
+    // Hue Picker Vars
+    var huePicker = this.huePickerRef.current;
+    var hpCtx = huePicker.getContext("2d");
+    huePicker.width = 150;
+    huePicker.height = 20;
+    var gradient = hpCtx.createLinearGradient(0, 20, 150, 20);
+
+    gradient.addColorStop(0, 'red');
+    gradient.addColorStop(1 / 7, 'orange');
+    gradient.addColorStop(2 / 7, 'yellow');
+    gradient.addColorStop(3 / 7, 'green');
+    gradient.addColorStop(4 / 7, 'blue');
+    gradient.addColorStop(5 / 7, 'indigo');
+    gradient.addColorStop(6 / 7, 'violet');
+    gradient.addColorStop(1, 'red');
+    
+    hpCtx.fillStyle = gradient;
+    hpCtx.fillRect(0, 0, 150, 20);
+
     // Data Vars
-    var picking = false;
+    var pickingLightness = false;
+    var latestLightnessPos = {x: 149, y: 0};
+    var pickingHue = false;
 
     // Events
     lightnessPicker.addEventListener('mousedown', (event) => {
-      picking = true;
+      pickingLightness = true;
       var pixelData = lightnessPicker.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+      latestLightnessPos = {x: event.offsetX, y: event.offsetY};
       setColor(`rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`);
     });
-    lightnessPicker.addEventListener('mouseup', (event) => picking = false);
-    lightnessPicker.addEventListener('mousemove', (event) => handleOver(event));
-    lightnessPicker.addEventListener('mouseout', (event) => picking = false);
+    lightnessPicker.addEventListener('mouseup', (event) => pickingLightness = false);
+    lightnessPicker.addEventListener('mouseout', (event) => pickingLightness = false);
+    lightnessPicker.addEventListener('mousemove', (event) => overLightnessPicker(event));
 
-    function handleOver (event) {
-      if (!picking) return;
+    huePicker.addEventListener('mousedown', (event) => {
+      pickingHue = true;
+      pickHue(event);
+    });
+    huePicker.addEventListener("mouseup", (event) => pickingHue = false);
+    huePicker.addEventListener("mouseout", (event) => pickingHue = false);
+    huePicker.addEventListener('mousemove', (event) => {if (pickingHue) pickHue(event)});
+
+    // Functions
+    function overLightnessPicker (event) {
+      if (!pickingLightness) return;
 
       var pixelData = lightnessPicker.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
       setColor(`rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3]})`);
+    }
+
+    function pickHue (event) {
+      var pixelData1 = huePicker.getContext('2d').getImageData(event.offsetX, event.offsetY, 1, 1).data;
+      changeColor(`rgba(${pixelData1[0]}, ${pixelData1[1]}, ${pixelData1[2]}, ${pixelData1[3]})`);
+
+      var pixelData2 = lightnessPicker.getContext('2d').getImageData(latestLightnessPos.x, latestLightnessPos.y, 1, 1).data;
+      setColor(`rgba(${pixelData2[0]}, ${pixelData2[1]}, ${pixelData2[2]}, ${pixelData2[3]})`);
     }
 
     function changeColor (color) {
@@ -164,9 +204,13 @@ class ColorPicker extends React.Component {
   }
   render() {
     return (
-      <div>
-        <div id="colorPickerMenu">
-          <canvas id="colorPickCanv" ref={this.lightnessPickerRef}></canvas>
+      <div id="colorPickerMenu">
+        <div id="colorChangers">
+          <canvas id="lightnessPickerCanv" ref={this.lightnessPickerRef}></canvas>
+          <canvas id="huePickerCanv" ref={this.huePickerRef}></canvas>
+        </div>
+        <div id="colorValues">
+
         </div>
       </div>
     )
@@ -195,8 +239,8 @@ class JamCanvas extends React.Component {
     var ctx = canvas.getContext("2d");
 
     // Vars
-    var canvWidth = window.innerWidth;
-		var canvHeight = window.innerHeight;
+    var canvWidth = document.body.offsetWidth;
+    var canvHeight = document.body.offsetHeight;
     var mouseDown = false;
 
     var getStateProp = this.getStateProp.bind(this);
@@ -206,12 +250,12 @@ class JamCanvas extends React.Component {
 
     function sizeCanvas () {
       var saved_rect = ctx.getImageData(0, 0, canvWidth, canvHeight);
-      canvas.height = window.innerHeight;
-      canvas.width = window.innerWidth;
+      canvas.height = document.body.offsetHeight;
+      canvas.width = document.body.offsetWidth;
       ctx.putImageData(saved_rect, 0, 0);
 
-      canvWidth = window.innerWidth;
-		  canvHeight = window.innerHeight;
+      canvWidth = document.body.offsetWidth;
+		  canvHeight = document.body.offsetHeight;
     }
 
     /*/ Infini-Canvas Vars
@@ -229,7 +273,13 @@ class JamCanvas extends React.Component {
     // Events
     document.addEventListener("mousedown", (event) => {
       if (this.state.colorPickerOpen === false) return;
-      if (event.target.id !== "colorPickCanv" && event.target.id !== "mainColorBox") {
+
+      // Check for touch outside of colorPickerMenu
+      if (event.target.id !== "colorPickerMenu" && 
+      event.target.id !== "mainColorBox" && 
+      event.target.id !== "lightnessPickerCanv" && 
+      event.target.id !== "huePickerCanv"
+      ) {
         var colorPickerMenu = document.getElementById('colorPickerMenu');
         colorPickerMenu.style.animation = "closeColorPicker 0.1s forwards";
         this.setState({colorPickerOpen: false});
@@ -237,7 +287,6 @@ class JamCanvas extends React.Component {
           colorPickerMenu.style.visibility = "hidden";
         },100)
       }
-      console.log(event.target.id);
     })
     document.body.onmousedown = e => { if (e.button === 1) return false }
     document.body.onmouseup = e => { if (e.button === 1) return false }
@@ -269,6 +318,7 @@ class JamCanvas extends React.Component {
       ctx.stroke();
       ctx.beginPath();
       ctx.moveTo(event.offsetX, event.offsetY);
+      console.log("test");
     }
   }
   render() {
@@ -276,7 +326,7 @@ class JamCanvas extends React.Component {
     var jamID = "canvas-" + jamName;
 
     return (
-      <div>
+      <div id="jamContainer">
         <div id="jamSideBar">
           <div className="colorBox" id="mainColorBox" onClick={() => {
             // Check if color picker is open or not
@@ -297,7 +347,7 @@ class JamCanvas extends React.Component {
           </div>
         </div>
         <ColorPicker key="lePicker3000" name="lePicker" callbacks={{updateDrawingProp: this.updateDrawingProp}} />
-        <canvas id={jamID} ref={this.canvasRef}{...this.props}>
+        <canvas className="leCanvas3000" id={jamID} ref={this.canvasRef}{...this.props}>
 
         </canvas>
       </div>
