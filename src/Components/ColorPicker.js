@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import React from 'react';
 import CustomPicker from './CustomPicker';
 
 import '../App.css';
@@ -18,8 +18,6 @@ class ColorPicker extends React.Component {
   componentDidMount() {
     // Local Function Vars
     let setColor = this.setColor.bind(this);
-    let setProp = this.setProp.bind(this);
-    let getProp = this.getProp.bind(this);
 
     // Functions
     function pickLightness (data) {

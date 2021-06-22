@@ -1,7 +1,6 @@
 import React, { createRef } from 'react';
 
 import '../App.css';
-import lightnessImg from '../assets/lightnessImg.png';
 
 // Example: <CustomPicker name="alphaPickerCanv" width={150} height={20} gradient={{startX: 0, startY: 20, endX:150, endY:20, arr: ["#ffffff00", "#000"]}} pointer={{startX: 0, startY: 0, motionType: "bilinear"}} borderRadius="5px" callbacks={{newEvent: this.captureEvent}} ></CustomPicker>
 
