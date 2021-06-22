@@ -11,8 +11,6 @@ class ColorPicker extends React.Component {
       updateDrawingProp: props.callbacks.updateDrawingProp,
       curColor: [0, 0, 0, 255]
     }
-    this.lightnessPickerRef = createRef(null);
-    this.huePickerRef = createRef(null);
     this.captureEvent = this.captureEvent.bind(this);
     this.registerCallback = this.registerCallback.bind(this);
     this.canvasCallbacks = {}
@@ -38,8 +36,6 @@ class ColorPicker extends React.Component {
 
   }
   render() {
-    //<canvas id="huePickerCanv" ref={this.huePickerRef}></canvas>
-    //<canvas id="lightnessPickerCanv" ref={this.lightnessPickerRef}></canvas>
     return (
       <div id="colorPickerMenu">
         <div id="colorChangers">
