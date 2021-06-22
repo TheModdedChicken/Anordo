@@ -124,14 +124,14 @@ input {
 }
 
 #mainMenuBack {
-  position: absolute;
+  position: relative;
   font-size: 14px;
   font-weight: 600;
-
-  top: 325px;
-  left: 840px;
   cursor: pointer;
 
+  top: -2px;
+  padding: 0;
+  margin: 5px;
   transition: color 0.1s ease-in-out;
 }
 
@@ -268,6 +268,51 @@ input {
   top: 0;
   pointer-events: none;
   user-select: none;
+}
+
+.alertBoard {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 300px;
+  margin: 10px;
+}
+
+.alertBox {
+  position: relative;
+  background: #fff;
+  box-shadow: 0px 3px 8px #888888;
+  border-radius: 6px;
+  width: 100%;
+  height: fit-content;
+  user-select: none;
+  cursor: pointer;
+}
+
+.alertTitle {
+  position: relative;
+  font-size: 14px;
+  top: 10px;
+  left: 14px;
+  text-align: left;
+}
+
+.alertDetails {
+  position: relative;
+  font-size: 12px;
+  left: 14px;
+  text-align: left;
+  width: 270px;
+}
+
+.alertTimeBar {
+  position: relative;
+  width: 300px;
+  height: 6px;
+  left: 0;
+  border-radius: 0 0 6px 6px;
+
+  transition: width 0.2s ease-in;
 }
 
 @keyframes openColorPicker {

@@ -3,6 +3,7 @@ import './App.css';
 
 import JamCanvas from './Components/JamCanvas';
 import CustomToggle from './Components/CustomToggle';
+import AlertBoard from './Components/AlertBoard';
 
 /* Menus */
 
@@ -35,15 +36,14 @@ class CreateJamMenu extends React.Component {
     super(props);
     this.state = {
       event: props.callbacks.events,
-      dataMod: props.callbacks.dataMod
+      dataMod: props.callbacks.dataMod,
+      newAlert: props.callbacks.newAlert
     }
   }
   render() {
-    const backButtonText = "< Back";
-
     return (
       <div>
-        <p id="mainMenuBack" onClick={() => this.state.event("goto-mainMenu")}>{backButtonText}</p>
+        <p id="mainMenuBack" onClick={() => this.state.event("goto-mainMenu")}>Back</p>
         <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false"></input>
         <CustomToggle name="Limited Color Pallet"/>
         <CustomToggle name="Tiled"/>
@@ -58,7 +58,12 @@ class CreateJamMenu extends React.Component {
     var jamNameInput = document.getElementById("jamNameInput").value;
     var currentDate = new Date();
 
-    if (jamNameInput === null) jamNameInput = "Jam-" + currentDate.getMilliseconds();
+    if (jamNameInput === "") {
+      jamNameInput = "Jam-" + currentDate.getMilliseconds() + "" + currentDate.getHours();
+      this.state.newAlert("jamNameInput", "Jam Name", `No jam name specified, using ${jamNameInput} as filler.`, 15, "warning", () => {
+        console.log("bap");
+      })
+    };
     this.state.dataMod("curJamName", jamNameInput);
 
     this.state.event("goto-jamCanvas");
@@ -75,13 +80,26 @@ class App extends React.Component {
     this.handleEvent = this.handleEvent.bind(this);
     this.appendStateData = this.appendStateData.bind(this);
     this.collectStateData = this.collectStateData.bind(this);
+    this.registerCallback = this.registerCallback.bind(this);
+    this.newAlert = this.newAlert.bind(this);
+    this.appCallbacks = {}
   }
+  /*
+  componentDidMount() {
+    setTimeout(() => {
+      this.appCallbacks.mainAlertBoard.newAlert("test", "Test", "Wow alert very is cool nice", "info", () => {
+        console.log("le callback");
+      })
+    },5000)
+  }*/
   render() {
     var curMenu;
+
     const callbackMethods = {
       events: this.handleEvent,
       dataMod: this.appendStateData,
-      dataCol: this.collectStateData
+      dataCol: this.collectStateData,
+      newAlert: this.newAlert
     }
 
     if (this.state.currentMenu === "mainMenu") {
@@ -107,6 +125,7 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
+          <AlertBoard name="mainAlertBoard" callbacks={{registerCallback: this.registerCallback}} />
           {curMenu}
         </header>
       </div>
@@ -131,6 +150,13 @@ class App extends React.Component {
         this.setState({currentMenu: "jamCanvas"});
       }
     }
+  }
+  newAlert(id, title, details, duration, type, callback) {
+    this.appCallbacks.mainAlertBoard.newAlert(id, title, details, duration, type, callback);
+  }
+  registerCallback(componentId, callbackId, callback) {
+    if (!this.appCallbacks[componentId]) this.appCallbacks[componentId] = {};
+    this.appCallbacks[componentId][callbackId] = callback;
   }
 }
 
