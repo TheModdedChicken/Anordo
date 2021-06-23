@@ -53,7 +53,7 @@ class CreateJamMenu extends React.Component {
     return (
       <div>
         <p id="mainMenuBack" onClick={() => this.state.event("goto-mainMenu")}>Back</p>
-        <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false"></input>
+        <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false" autoComplete="off"></input>
         <CustomToggle name="Limited Color Pallet"/>
         <CustomToggle name="Tiled"/>
         <CustomToggle name="Free Draw"/>
@@ -93,14 +93,25 @@ class App extends React.Component {
     this.newAlert = this.newAlert.bind(this);
     this.appCallbacks = {}
   }
-  /*
   componentDidMount() {
-    setTimeout(() => {
-      this.appCallbacks.mainAlertBoard.newAlert("test", "Test", "Wow alert very is cool nice", "info", () => {
-        console.log("le callback");
-      })
-    },5000)
-  }*/
+    var currentBuildType = "Production";
+    var currentBuild = "production";
+    if (window.location.href.indexOf("localhost") > -1) {
+      currentBuildType = "Developer"
+      currentBuild = "local"
+    } else if (window.location.href.indexOf("themoddedchicken.vercel.app") > -1) {
+      if (window.location.href.indexOf("anordo.themoddedchicken.vercel.app") === -1) {
+        currentBuild = window.location.href.split("-")[1];
+      }
+    } else if (window.location.href.indexOf("anordo-dev.vercel.app") > -1) {
+      currentBuildType = "Developer"
+      currentBuild = "latest"
+    }
+
+    if (currentBuildType !== "Production" && currentBuild !== "local") this.newAlert("currentBuildNotification", `Application Build (${currentBuild})`, `You are using a ${currentBuildType} build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning", () => {
+      console.log("currentBuild");
+    });
+  }
   render() {
     var curMenu;
 
