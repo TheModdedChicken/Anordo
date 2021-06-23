@@ -22,16 +22,12 @@ class MainMenu extends React.Component {
           Create Jam
         </button>
         <button className="mainMenuButton" onClick={() => {
-          this.state.newAlert("joinJamButtonPress", "Join Jam", `Multiplayer jams are not implemented yet!`, 5, "info", () => {
-            console.log("joinJamButtonPress");
-          })
+          this.state.newAlert("joinJamButtonPress", "Join Jam", `Multiplayer jams are not implemented yet!`, 5, "info")
         }}>
           Join Jam
         </button>
         <button className="mainMenuButton" onClick={() => {
-          this.state.newAlert("settingsButtonPress", "Settings", `The settings menu is not implemented yet!`, 5, "info", () => {
-            console.log("settingsButtonPress");
-          })
+          this.state.newAlert("settingsButtonPress", "Settings", `The settings menu is not implemented yet!`, 5, "info")
         }}>
           Settings
         </button>
@@ -69,9 +65,7 @@ class CreateJamMenu extends React.Component {
 
     if (jamNameInput === "") {
       jamNameInput = "Jam-" + currentDate.getMilliseconds() + "" + currentDate.getHours();
-      this.state.newAlert("jamNameInput", "Jam Name", `No jam name specified, using ${jamNameInput} as filler.`, 15, "warning", () => {
-        console.log("bap");
-      })
+      this.state.newAlert("jamNameInput", "Jam Name", `No jam name specified, using ${jamNameInput} as filler.`, 15, "warning")
     };
     this.state.dataMod("curJamName", jamNameInput);
 
@@ -109,9 +103,7 @@ class App extends React.Component {
       currentBuild = "latest"
     }
 
-    if (currentBuildType !== "Production" && currentBuild !== "local") this.newAlert("currentBuildNotification", `Application Build (${currentBuild})`, `You are using a ${currentBuildType} build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning", () => {
-      console.log("currentBuild");
-    });
+    if (currentBuildType !== "Production" && currentBuild !== "local") this.newAlert("currentBuildNotification", `Application Build (${currentBuild})`, `You are using a ${currentBuildType} build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
   }
   render() {
     var curMenu;
