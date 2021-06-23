@@ -101,6 +101,7 @@ class App extends React.Component {
       currentBuild = "local"
     } else if (window.location.href.indexOf("themoddedchicken.vercel.app") > -1) {
       if (window.location.href.indexOf("anordo.themoddedchicken.vercel.app") === -1) {
+        currentBuildType = "Developer"
         currentBuild = window.location.href.split("-")[1];
       }
     } else if (window.location.href.indexOf("anordo-dev.vercel.app") > -1) {
