@@ -12,6 +12,7 @@ class MainMenu extends React.Component {
     super(props);
     this.state = {
       event: props.callbacks.events,
+      newAlert: props.callbacks.newAlert
     }
   }
   render() {
@@ -20,10 +21,18 @@ class MainMenu extends React.Component {
         <button className="mainMenuButton" onClick={() => this.state.event("goto-createJamMenu")}>
           Create Jam
         </button>
-        <button className="mainMenuButton">
+        <button className="mainMenuButton" onClick={() => {
+          this.state.newAlert("joinJamButtonPress", "Join Jam", `Multiplayer jams are not implemented yet!`, 5, "info", () => {
+            console.log("joinJamButtonPress");
+          })
+        }}>
           Join Jam
         </button>
-        <button className="mainMenuButton">
+        <button className="mainMenuButton" onClick={() => {
+          this.state.newAlert("settingsButtonPress", "Settings", `The settings menu is not implemented yet!`, 5, "info", () => {
+            console.log("settingsButtonPress");
+          })
+        }}>
           Settings
         </button>
       </div>

@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import AlertBox from './AlertBox';
 
 import '../App.css';
 
@@ -12,8 +14,7 @@ class AlertBoard extends React.Component {
       registerCallback: props.callbacks.registerCallback
     }
     this.newAlert = this.newAlert.bind(this);
-    this.editAlert = this.editAlert.bind(this);
-    this.stepAlert = this.stepAlert.bind(this);
+    this.dismissAlert = this.dismissAlert.bind(this);
     this.alerts = {};
   }
   componentDidMount() {
@@ -27,80 +28,17 @@ class AlertBoard extends React.Component {
     )
   }
   newAlert(id, title, details, duration, type, callback) {
+    var alert = <AlertBox name={id} title={title} details={details} duration={duration} type={type} callback={callback} boardCallbacks={{dismissAlert: this.dismissAlert}} />;
+
     var alertBoard = document.getElementById(this.state.id + "-alertBoard");
+    var alertContainer = document.createElement("div");
+    alertContainer.id = id + "-alertContainer";
+    alertBoard.appendChild(alertContainer);
 
-    var typeColor = "#3E8BFF"
-    if (type === "warning") typeColor = "#ffd23d"
-    else if (type === "error") typeColor = "#ff3d3d";
-
-    var alertBox = document.createElement("div");
-    alertBox.className = "alertBox";
-    alertBox.id = this.state.id + "-alertBox";
-
-    var alertTimeBar = document.createElement("div");
-    alertTimeBar.className = "alertTimeBar";
-    alertTimeBar.id = this.state.id + "-alertTimeBar"
-    alertTimeBar.style.background = typeColor;
-
-    var alertTitle = document.createElement("h3");
-    alertTitle.className = "alertTitle";
-    alertTitle.id = this.state.id + "-alertTitle";
-    alertTitle.textContent = title;
-
-    var alertDetails = document.createElement("p");
-    alertDetails.className = "alertDetails";
-    alertDetails.id = this.state.id + "-alertDetails";
-    alertDetails.textContent = details;
-
-    alertBox.append(alertTitle, alertDetails, alertTimeBar);
-    alertBoard.appendChild(alertBox);
-
-    alertBox.addEventListener('click', callback);
-
-    this.alerts[id] = {
-      elements: {
-        box: alertBox.id,
-        title: alertTitle.id,
-        details: alertDetails.id,
-        timeBar: alertTimeBar.id
-      },
-      duration: duration,
-      body: {
-        title: title,
-        details: details
-      },
-      type: type,
-      callback: callback
-    };
-
-    this.stepAlert(id);
+    ReactDOM.render(alert, document.getElementById(id + "-alertContainer"))
   }
-  editAlert(id, newDetails, newType, callback) {
-
-  }
-  stepAlert (id) {
-    var timeBar = document.getElementById(this.alerts[id].elements.timeBar);
-    var duration = this.alerts[id].duration
-    var timeBarStep = 300 / duration;
-    var timeBarWidth = 300;
-
-    var i = 0;
-    function leLoop() {
-      setTimeout(function() {
-        timeBarWidth = 300 - (timeBarStep * i);
-        timeBar.style.width = timeBarWidth + "px";
-
-        i++;
-        if (i <= duration) leLoop();
-      }, 1000)
-    }
-    leLoop();
-
-    setTimeout(() => {
-      var box = document.getElementById(this.alerts[id].elements.box);
-      box.parentNode.removeChild(box);
-      delete this.alerts[id]
-    },`${this.alerts[id].duration + 1}300`)
+  dismissAlert(id) {
+    ReactDOM.unmountComponentAtNode(document.getElementById(id + "-alertContainer"))
   }
 }
 
