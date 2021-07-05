@@ -27,6 +27,14 @@ class AlertBoard extends React.Component {
       <div className="alertBoard" id={this.state.id + "-alertBoard"}></div>
     )
   }
+  /**
+    * @param {String} id Alert reference id
+    * @param {String} title Alert title
+    * @param {String} details Alert details
+    * @param {Number} duration Alert lifetime in seconds
+    * @param {String} type Type of alert
+    * @param {Function} callback Function to call on click (optional)
+    */
   newAlert(id, title, details, duration, type, callback) {
     var alert = <AlertBox name={id} title={title} details={details} duration={duration} type={type} callback={callback} boardCallbacks={{dismissAlert: this.dismissAlert}} />;
 

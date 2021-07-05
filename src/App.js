@@ -5,6 +5,8 @@ import JamCanvas from './Components/JamCanvas';
 import CustomToggle from './Components/CustomToggle';
 import AlertBoard from './Components/AlertBoard';
 
+import { SceneManager, Scene } from "./Division/index";
+
 /* Menus */
 
 class MainMenu extends React.Component {
@@ -106,8 +108,6 @@ class App extends React.Component {
     if (currentBuildType !== "Production" && currentBuild !== "local") this.newAlert("currentBuildNotification", `Application Build (${currentBuild})`, `You are using a ${currentBuildType} build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
   }
   render() {
-    var curMenu;
-
     const callbackMethods = {
       events: this.handleEvent,
       dataMod: this.appendStateData,
@@ -115,31 +115,31 @@ class App extends React.Component {
       newAlert: this.newAlert
     }
 
-    if (this.state.currentMenu === "mainMenu") {
-      curMenu = (
-        <div className="mainPanel">
-          <MainMenu name="mainMenu" callbacks={callbackMethods} />
-        </div>
-      );
-    } else if (this.state.currentMenu === "createJamMenu") {
-      curMenu = (
-        <div className="mainPanel">
-          <CreateJamMenu name="jamCreationMenu" callbacks={callbackMethods} />
-        </div>
-      );
-    } else if (this.state.currentMenu === "jamCanvas") {
-      curMenu = (
-        <div>
-          <JamCanvas name="jamCanvas" callbacks={callbackMethods} />
-        </div>
-      );
-    }
+    var appScenes = new SceneManager("appScenes").setScene(this.state.currentMenu);
+
+    new Scene("mainMenu", "mainMenu", (
+      <div className="mainPanel">
+        <MainMenu name="mainMenu" callbacks={callbackMethods} />
+      </div>
+    ), appScenes);
+
+    new Scene("createJamMenu", "createJamMenu", (
+      <div className="mainPanel">
+        <CreateJamMenu name="jamCreationMenu" callbacks={callbackMethods}/>
+      </div>
+    ), appScenes);
+
+    new Scene("jamCanvas", "jamCanvas", (
+      <div>
+        <JamCanvas name="jamCanvas" callbacks={callbackMethods} />
+      </div>
+    ), appScenes);
 
     return (
       <div className="App">
         <header className="App-header">
           <AlertBoard name="mainAlertBoard" callbacks={{registerCallback: this.registerCallback}} />
-          {curMenu}
+          {appScenes.render()}
         </header>
       </div>
     );
@@ -164,9 +164,22 @@ class App extends React.Component {
       }
     }
   }
+  /**
+    * @param {String} id Alert reference id
+    * @param {String} title Alert title
+    * @param {String} details Alert details
+    * @param {Number} duration Alert lifetime in seconds
+    * @param {String} type Type of alert
+    * @param {Function} callback Function to call on click (optional)
+    */
   newAlert(id, title, details, duration, type, callback) {
     this.appCallbacks.mainAlertBoard.newAlert(id, title, details, duration, type, callback);
   }
+  /**
+    * @param {String} componentId ID if Component
+    * @param {String} callbackId ID of Callback
+    * @param {Function} callback Callback to register
+    */
   registerCallback(componentId, callbackId, callback) {
     if (!this.appCallbacks[componentId]) this.appCallbacks[componentId] = {};
     this.appCallbacks[componentId][callbackId] = callback;

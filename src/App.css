@@ -251,25 +251,6 @@ input {
   border-radius: 5px;
 }
 
-.customPickerContainer {
-  position: relative;
-  width: fit-content;
-  height: fit-content;
-}
-
-.pickerCanvPointer {
-  position: absolute;
-  background: gray;
-  border: solid lightgray;
-  border-width: 1px 1px;
-  border-radius: 20px;
-  width: 6px;
-  height: 6px;
-  top: 0;
-  pointer-events: none;
-  user-select: none;
-}
-
 .alertBoard {
   position: fixed;
   bottom: 0;

@@ -1,8 +1,9 @@
 import React, { createRef } from 'react';
 
 import '../App.css';
+import '../Styles/CustomPicker.css';
 
-// Example: <CustomPicker name="alphaPickerCanv" width={150} height={20} gradient={{startX: 0, startY: 20, endX:150, endY:20, arr: ["#ffffff00", "#000"]}} pointer={{startX: 0, startY: 0, motionType: "bilinear"}} borderRadius="5px" callbacks={{newEvent: this.captureEvent}} ></CustomPicker>
+/// Example: <CustomPicker name="alphaPickerCanv" width={150} height={20} gradient={{startX: 0, startY: 20, endX:150, endY:20, arr: ["#ffffff00", "#000"]}} pointer={{startX: 0, startY: 0, motionType: "bilinear"}} borderRadius="5px" callbacks={{newEvent: this.captureEvent}} ></CustomPicker>
 
 class CustomPicker extends React.Component {
   constructor(props) {
@@ -25,11 +26,9 @@ class CustomPicker extends React.Component {
     this.getPosData = this.getPosData.bind(this);
   }
   componentDidMount() {
+    this.registerCallbacks();
     var getProp = this.getProp;
     var newEvent = this.state.newEvent;
-
-    this.state.registerCallback(this.state.id, "setProp", this.setProp);
-    this.state.registerCallback(this.state.id, "getPosData", this.getPosData);
 
     var customPicker = this.customPickerRef.current;
     var cpCtx = customPicker.getContext('2d');
@@ -222,6 +221,10 @@ class CustomPicker extends React.Component {
         <div className="pickerCanvPointer" id={this.state.id + "-pointer"}></div>
       </div>
     )
+  }
+  registerCallbacks() {
+    this.state.registerCallback(this.state.id, "setProp", this.setProp);
+    this.state.registerCallback(this.state.id, "getPosData", this.getPosData);
   }
   setProp(property, data) {
     this.setState({[property]: data});
