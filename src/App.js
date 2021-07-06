@@ -4,7 +4,7 @@ import './App.css';
 import JamCanvas from './Components/JamCanvas';
 import CustomToggle from './Components/CustomToggle';
 
-import { SceneManager, Scene, AlertBoard } from "./Division/index";
+import { SceneManager, Scene, AlertBoard, EventManager } from "./Division/index";
 
 /* Menus */
 
@@ -12,14 +12,14 @@ class MainMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      handleEvent: props.callbacks.handleEvent,
+      callEvent: props.callbacks.callEvent,
       newAlert: props.callbacks.newAlert
     }
   }
   render() {
     return (
       <div>
-        <button className="mainMenuButton" onClick={() => this.state.handleEvent("goto-createJamMenu")}>
+        <button className="mainMenuButton" onClick={() => this.state.callEvent("goto_createJamMenu")}>
           Create Jam
         </button>
         <button className="mainMenuButton" onClick={() => {
@@ -41,7 +41,7 @@ class CreateJamMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      handleEvent: props.callbacks.handleEvent,
+      callEvent: props.callbacks.callEvent,
       setAppState: props.callbacks.setAppState,
       newAlert: props.callbacks.newAlert
     }
@@ -49,7 +49,7 @@ class CreateJamMenu extends React.Component {
   render() {
     return (
       <div>
-        <p id="mainMenuBack" onClick={() => this.state.handleEvent("goto-mainMenu")}>Back</p>
+        <p id="mainMenuBack" onClick={() => this.state.callEvent("goto_mainMenu")}>Back</p>
         <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false" autoComplete="off"></input>
         <CustomToggle name="Limited Color Pallet"/>
         <CustomToggle name="Tiled"/>
@@ -70,7 +70,7 @@ class CreateJamMenu extends React.Component {
     };
     this.state.setAppState("curJamName", jamNameInput);
 
-    this.state.handleEvent("goto-jamCanvas");
+    this.state.callEvent("goto_jamCanvas");
   }
 }
 
@@ -81,7 +81,11 @@ class App extends React.Component {
       currentMenu: "mainMenu",
       curJamName: ""
     }
-    this.handleEvent = this.handleEvent.bind(this);
+    this.eventManager = new EventManager("mainEventManager").addEvents({
+      goto_mainMenu: () => {this.setState({currentMenu: "mainMenu"})},
+      goto_createJamMenu: () => {this.setState({currentMenu: "createJamMenu"})},
+      goto_jamCanvas: () => {this.setState({currentMenu: "jamCanvas"})}
+    })
     this.setAppState = this.setAppState.bind(this);
     this.getAppState = this.getAppState.bind(this);
     this.registerCallback = this.registerCallback.bind(this);
@@ -95,7 +99,7 @@ class App extends React.Component {
   }
   render() {
     const callbackMethods = {
-      handleEvent: this.handleEvent,
+      callEvent: this.eventManager.call,
       setAppState: this.setAppState,
       getAppState: this.getAppState,
       newAlert: this.newAlert
@@ -135,20 +139,6 @@ class App extends React.Component {
   }
   getAppState(state) {
     return this.state[state];
-  }
-  handleEvent(event, cargo) {
-    var action = event.split("-")[0];
-    var arg = event.split("-")[1];
-
-    if (action === "goto") {
-      if (arg === "mainMenu") {
-        this.setState({currentMenu: "mainMenu"});
-      } else if (arg === "createJamMenu") {
-        this.setState({currentMenu: "createJamMenu"});
-      } else if (arg === "jamCanvas") {
-        this.setState({currentMenu: "jamCanvas"});
-      }
-    }
   }
   /**
     * @param {String} id Alert reference id

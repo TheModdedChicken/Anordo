@@ -8,7 +8,7 @@ class JamCanvas extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      event: props.callbacks.events,
+      callEvent: props.callbacks.callEvent,
       setAppState: props.callbacks.setAppState,
       getAppState: props.callbacks.getAppState,
       penColor: "rgba(0,0,0,255)",

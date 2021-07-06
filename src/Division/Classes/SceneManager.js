@@ -12,6 +12,12 @@ class SceneManager {
     this.callbacks = {};
     this.scenes = {};
     this.currentScene = "";
+
+    this.addScene = this.addScene.bind(this);
+    this.addScenes = this.addScenes.bind(this);
+    this.removeScene = this.removeScene.bind(this);
+    this.setScene = this.setScene.bind(this);
+    this.render = this.render.bind(this);
   }
   /**
    * @param {Scene} scene 

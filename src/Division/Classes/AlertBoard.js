@@ -11,6 +11,10 @@ class AlertBoard {
     this.newAlert = this.newAlert.bind(this);
     this.dismissAlert = this.dismissAlert.bind(this);
     this.alerts = {};
+
+    this.newAlert = this.newAlert.bind(this);
+    this.dismissAlert = this.dismissAlert.bind(this);
+    this.render = this.render.bind(this);
   }
   /**
     * @param {String} id Alert reference id
@@ -43,7 +47,7 @@ class AlertBoard {
   render() {
     return (
       <div className="alertBoard" id={this.id + "-alertBoard"}></div>
-    )
+    );
   }
 }
 
