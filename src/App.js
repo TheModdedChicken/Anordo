@@ -29,7 +29,7 @@ class App extends React.Component {
   }
   componentDidMount() {
     if (window.location.href.indexOf("anordo.vercel.app") == -1 && window.location.href.indexOf("localhost") == -1) 
-      this.newAlert("currentBuildNotification", "Application Build (Dev)", `You are using a development build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
+      this.alertBoard.newAlert("currentBuildNotification", "Application Build (Dev)", `You are using a development build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
   }
   render() {
     const callbackMethods = {
