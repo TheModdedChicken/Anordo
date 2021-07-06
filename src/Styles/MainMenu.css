@@ -1,0 +1,139 @@
+.mainMenu {
+  position: absolute;
+
+  top: calc(50% - 130px);
+  left: calc(50% - 130px);
+}
+
+/* Menu Panels */
+
+.menuPanel {
+  background: #ffffff;
+  position: absolute;
+  width: 255px;
+
+  padding: 10px 5px 10px 5px;
+
+  box-shadow: 0px 3px 8px #888888;
+
+  border-radius: 12px;
+
+  float: left;
+
+  transition: height 0.2s, width 0.2s;
+}
+
+#createJamMenuPanel {
+  opacity: 0;
+  transform: translateX(500px);
+}
+
+/* Elements */
+
+.mainMenuButton {
+  background: #ffffff;
+  height: 55px;
+  width: 245px;
+
+  outline: none;
+  border: none;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 18px;
+
+  transition: background 0.2s;
+
+  cursor: pointer;
+}
+
+.mainMenuButton:hover {
+  background: #f0f0f0;
+}
+
+.mainMenuButton:active {
+  background: #d1d1d1;
+}
+
+#mainMenuBack {
+  position: relative;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  top: -2px;
+  padding: 0;
+  margin: 5px;
+  transition: color 0.1s ease-in-out;
+}
+
+#mainMenuBack:hover {
+  color: #3E8BFF;
+}
+
+#jamNameInput {
+  background: #F0F0F0;
+  text-align: center;
+
+  height: 40px;
+  font-weight: 600;
+  font-size: 16px;
+
+  padding: 0 10px 0 10px;
+
+  border-radius: 10px;
+
+  margin-bottom: 5px;
+}
+
+.openJamButton {
+  background: #ffffff;
+  height: 40px;
+
+  outline: none;
+  border: none;
+  border-radius: 10px;
+
+  font-weight: 600;
+  font-size: 16px;
+
+  transition: background 0.2s;
+
+  cursor: pointer;
+}
+
+.openJamButton:hover {
+  background: #f0f0f0;
+}
+
+.openJamButton:active {
+  background: #d1d1d1;
+}
+
+#jamMenuJamCode {
+  position: relative;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0;
+  margin: 10px 8px 8px 8px;
+}
+
+@keyframes middle_to_left_fadeOut {
+  0% { visibility: visible; transform: translateX(0px); opacity: 100;}
+  100% { visibility: hidden; transform: translateX(-500px); opacity: 0;}
+}
+
+@keyframes right_to_middle_fadeIn {
+  0% { visibility: visible; transform: translateX(500px); opacity: 0;}
+  100% { visibility: visible; transform: translateX(0px); opacity: 100;}
+}
+
+@keyframes left_to_middle_fadeIn {
+  0% { visibility: visible; transform: translateX(-500px); opacity: 0;}
+  100% { visibility: visible; transform: translateX(0px); opacity: 100;}
+}
+
+@keyframes middle_to_right_fadeOut {
+  0% { visibility: visible; transform: translateX(0px); opacity: 100;}
+  100% { visibility: hidden; transform: translateX(500px); opacity: 0;}
+}

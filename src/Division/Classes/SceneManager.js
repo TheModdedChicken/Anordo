@@ -2,6 +2,8 @@ import React from "react";
 import { JSONIsEmpty } from "../utilities";
 import Scene from "./Scene";
 
+import '../css/Scenes.css';
+
 class SceneManager {
   /**
    * 
