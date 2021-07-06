@@ -1,4 +1,5 @@
 import React from "react";
+import { JSONIsEmpty } from "../utilities";
 import Scene from "./Scene";
 
 class SceneManager {

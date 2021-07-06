@@ -9,8 +9,8 @@ class JamCanvas extends React.Component {
     super(props);
     this.state = {
       event: props.callbacks.events,
-      dataMod: props.callbacks.dataMod,
-      dataCol: props.callbacks.dataCol,
+      setAppState: props.callbacks.setAppState,
+      getAppState: props.callbacks.getAppState,
       penColor: "rgba(0,0,0,255)",
       penWidth: 6,
       colorPickerOpen: false
@@ -96,7 +96,7 @@ class JamCanvas extends React.Component {
     }
   }
   render() {
-    var jamName = this.state.dataCol("curJamName");
+    var jamName = this.state.getAppState("curJamName");
     var jamID = "canvas-" + jamName;
 
     return (

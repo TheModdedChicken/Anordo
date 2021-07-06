@@ -3,9 +3,8 @@ import './App.css';
 
 import JamCanvas from './Components/JamCanvas';
 import CustomToggle from './Components/CustomToggle';
-import AlertBoard from './Components/AlertBoard';
 
-import { SceneManager, Scene } from "./Division/index";
+import { SceneManager, Scene, AlertBoard } from "./Division/index";
 
 /* Menus */
 
@@ -13,14 +12,14 @@ class MainMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      event: props.callbacks.events,
+      handleEvent: props.callbacks.handleEvent,
       newAlert: props.callbacks.newAlert
     }
   }
   render() {
     return (
       <div>
-        <button className="mainMenuButton" onClick={() => this.state.event("goto-createJamMenu")}>
+        <button className="mainMenuButton" onClick={() => this.state.handleEvent("goto-createJamMenu")}>
           Create Jam
         </button>
         <button className="mainMenuButton" onClick={() => {
@@ -42,15 +41,15 @@ class CreateJamMenu extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      event: props.callbacks.events,
-      dataMod: props.callbacks.dataMod,
+      handleEvent: props.callbacks.handleEvent,
+      setAppState: props.callbacks.setAppState,
       newAlert: props.callbacks.newAlert
     }
   }
   render() {
     return (
       <div>
-        <p id="mainMenuBack" onClick={() => this.state.event("goto-mainMenu")}>Back</p>
+        <p id="mainMenuBack" onClick={() => this.state.handleEvent("goto-mainMenu")}>Back</p>
         <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false" autoComplete="off"></input>
         <CustomToggle name="Limited Color Pallet"/>
         <CustomToggle name="Tiled"/>
@@ -69,9 +68,9 @@ class CreateJamMenu extends React.Component {
       jamNameInput = "Jam-" + currentDate.getMilliseconds() + "" + currentDate.getHours();
       this.state.newAlert("jamNameInput", "Jam Name", `No jam name specified, using ${jamNameInput} as filler.`, 15, "warning")
     };
-    this.state.dataMod("curJamName", jamNameInput);
+    this.state.setAppState("curJamName", jamNameInput);
 
-    this.state.event("goto-jamCanvas");
+    this.state.handleEvent("goto-jamCanvas");
   }
 }
 
@@ -83,35 +82,22 @@ class App extends React.Component {
       curJamName: ""
     }
     this.handleEvent = this.handleEvent.bind(this);
-    this.appendStateData = this.appendStateData.bind(this);
-    this.collectStateData = this.collectStateData.bind(this);
+    this.setAppState = this.setAppState.bind(this);
+    this.getAppState = this.getAppState.bind(this);
     this.registerCallback = this.registerCallback.bind(this);
     this.newAlert = this.newAlert.bind(this);
+    this.alertBoard = new AlertBoard("mainAlertBoard");
     this.appCallbacks = {}
   }
   componentDidMount() {
-    var currentBuildType = "Production";
-    var currentBuild = "production";
-    if (window.location.href.indexOf("localhost") > -1) {
-      currentBuildType = "Developer"
-      currentBuild = "local"
-    } else if (window.location.href.indexOf("themoddedchicken.vercel.app") > -1) {
-      if (window.location.href.indexOf("anordo.themoddedchicken.vercel.app") === -1) {
-        currentBuildType = "Developer"
-        currentBuild = window.location.href.split("-")[1];
-      }
-    } else if (window.location.href.indexOf("anordo-dev.vercel.app") > -1) {
-      currentBuildType = "Developer"
-      currentBuild = "latest"
-    }
-
-    if (currentBuildType !== "Production" && currentBuild !== "local") this.newAlert("currentBuildNotification", `Application Build (${currentBuild})`, `You are using a ${currentBuildType} build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
+    if (window.location.href.indexOf("anordo.vercel.app") == -1 && window.location.href.indexOf("localhost") == -1) 
+      this.newAlert("currentBuildNotification", "Application Build (Dev)", `You are using a development build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
   }
   render() {
     const callbackMethods = {
-      events: this.handleEvent,
-      dataMod: this.appendStateData,
-      dataCol: this.collectStateData,
+      handleEvent: this.handleEvent,
+      setAppState: this.setAppState,
+      getAppState: this.getAppState,
       newAlert: this.newAlert
     }
 
@@ -138,16 +124,16 @@ class App extends React.Component {
     return (
       <div className="App">
         <header className="App-header">
-          <AlertBoard name="mainAlertBoard" callbacks={{registerCallback: this.registerCallback}} />
+          {this.alertBoard.render()}
           {appScenes.render()}
         </header>
       </div>
     );
   }
-  appendStateData(state, data) {
+  setAppState(state, data) {
     this.setState({[state]: data});
   }
-  collectStateData(state) {
+  getAppState(state) {
     return this.state[state];
   }
   handleEvent(event, cargo) {
@@ -170,10 +156,10 @@ class App extends React.Component {
     * @param {String} details Alert details
     * @param {Number} duration Alert lifetime in seconds
     * @param {String} type Type of alert
-    * @param {Function} callback Function to call on click (optional)
+    * @param {Function} callback Function to call on click _(optional)_
     */
-  newAlert(id, title, details, duration, type, callback) {
-    this.appCallbacks.mainAlertBoard.newAlert(id, title, details, duration, type, callback);
+  newAlert(id, title, details, duration, type, callback = null) {
+    this.alertBoard.newAlert(id, title, details, duration, type, callback);
   }
   /**
     * @param {String} componentId ID if Component

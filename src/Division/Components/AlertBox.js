@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../App.css';
+import '../css/Alerts.css';
 
 class AlertBox extends React.Component {
   constructor(props) {
@@ -32,6 +32,10 @@ class AlertBox extends React.Component {
     var timeBarStep = 300 / duration;
     var timeBarWidth = 300;
 
+    /* 
+      Yes I know what for loops are, I just can't use them in this case because of the "setTimeout" function.
+      If anyone has a better solution I'm all ears.
+    */
     var i = 0;
     function leLoop() {
       setTimeout(function() {
