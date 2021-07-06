@@ -124,14 +124,14 @@ input {
 }
 
 #mainMenuBack {
-  position: absolute;
+  position: relative;
   font-size: 14px;
   font-weight: 600;
-
-  top: 325px;
-  left: 840px;
   cursor: pointer;
 
+  top: -2px;
+  padding: 0;
+  margin: 5px;
   transition: color 0.1s ease-in-out;
 }
 
@@ -192,7 +192,7 @@ input {
 
 #jamSideBar {
   position: fixed;
-  width: 80px;
+  width: 75px;
   height: 100%;
 
   background: #fff;
@@ -207,7 +207,7 @@ input {
   width: 45px;
   height: 45px;
 
-  left: 6px;
+  left: 0px;
   margin: 15px;
 
   border-radius: 8px;
@@ -227,15 +227,19 @@ input {
 
   box-shadow: 0px 0px 8px #888888;
 
-  width: 380px;
-  height: 280px;
+  width: fit-content;
+  height: fit-content;
 
   left: 90px;
   top: 15px;
 
   border-radius: 10px;
 
-  padding: 20px;
+  padding: 20px 20px 15px 20px;
+}
+
+#colorChangers {
+  width: 150px;
 }
 
 #colorPickerMenu {
@@ -243,18 +247,17 @@ input {
   transform-origin: left center;
 }
 
-#lightnessPicker {
-  background: black;
-
+#huePickerCanv {
+  border-radius: 5px;
 }
 
 @keyframes openColorPicker {
-  0% { transform: scale3d(0.9, 0.9, 1); opacity: 0; }
-  80% { transform: scale3d(1.01, 1.01, 1); opacity: 100; }
-  100% { transform: scale3d(1, 1, 1); opacity: 100; }
+  0% { visibility: visible; transform: scale3d(0.9, 0.9, 1); opacity: 0; }
+  80% { visibility: visible; transform: scale3d(1.01, 1.01, 1); opacity: 100; }
+  100% { visibility: visible; transform: scale3d(1, 1, 1); opacity: 100; }
 }
 
 @keyframes closeColorPicker {
-  0% { transform: scale3d(1, 1, 1); opacity: 100; }
-  100% { transform: scale3d(0.9, 0.9, 1); opacity: 0; }
+  0% { visibility: visible; transform: scale3d(1, 1, 1); opacity: 100; }
+  100% { visibility: hidden; transform: scale3d(0.9, 0.9, 1); opacity: 0; }
 }
