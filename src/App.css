@@ -252,12 +252,12 @@ input {
 }
 
 @keyframes openColorPicker {
-  0% { transform: scale3d(0.9, 0.9, 1); opacity: 0; }
-  80% { transform: scale3d(1.01, 1.01, 1); opacity: 100; }
-  100% { transform: scale3d(1, 1, 1); opacity: 100; }
+  0% { visibility: visible; transform: scale3d(0.9, 0.9, 1); opacity: 0; }
+  80% { visibility: visible; transform: scale3d(1.01, 1.01, 1); opacity: 100; }
+  100% { visibility: visible; transform: scale3d(1, 1, 1); opacity: 100; }
 }
 
 @keyframes closeColorPicker {
-  0% { transform: scale3d(1, 1, 1); opacity: 100; }
-  100% { transform: scale3d(0.9, 0.9, 1); opacity: 0; }
+  0% { visibility: visible; transform: scale3d(1, 1, 1); opacity: 100; }
+  100% { visibility: hidden; transform: scale3d(0.9, 0.9, 1); opacity: 0; }
 }

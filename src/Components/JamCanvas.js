@@ -2,6 +2,8 @@ import React, { createRef } from 'react';
 import { evalProp } from './extras';
 import ColorPicker from './ColorPicker';
 
+import { AnimationController } from '../Division';
+
 import '../App.css';
 
 class JamCanvas extends React.Component {
@@ -29,6 +31,16 @@ class JamCanvas extends React.Component {
 
     var getStateProp = this.getStateProp.bind(this);
 
+    var colorPickerAC = new AnimationController("colorPickerMenu-AC", "colorPickerMenu", "hidden");
+
+    colorPickerAC.closeOnBlur = true;
+    colorPickerAC.addAnimation("hide", "closeColorPicker 0.1s forwards", () => {
+      this.setState({colorPickerOpen: false});
+    });
+    colorPickerAC.addAnimation("show", "openColorPicker 0.1s forwards", () => {
+      this.setState({colorPickerOpen: true});
+    }).addTouchElement("show", "mainColorBox");
+
     sizeCanvas();
     window.addEventListener("resize", (event) => sizeCanvas());
 
@@ -43,26 +55,6 @@ class JamCanvas extends React.Component {
     }
 
     // Events
-    document.addEventListener("mousedown", (event) => {
-      if (this.state.colorPickerOpen === false) return;
-
-      // Check for touch outside of colorPickerMenu
-      if (evalProp(event.target.id, [
-        "colorPickerMenu",
-        "mainColorBox",
-        "lightnessPickerCanv",
-        "huePickerCanv",
-        "alphaPickerCanv"
-      ], "and") === false) {
-        var colorPickerMenu = document.getElementById('colorPickerMenu');
-        colorPickerMenu.style.animation = "closeColorPicker 0.1s forwards";
-        this.setState({colorPickerOpen: false});
-        setTimeout(() => {
-          colorPickerMenu.style.visibility = "hidden";
-        },100)
-      }
-      console.log(this.state.penColor);
-    })
     document.body.onmousedown = e => { if (e.button === 1) return false }
     document.body.onmouseup = e => { if (e.button === 1) return false }
     canvas.addEventListener('mousedown', (event) => handleDown(event));
@@ -74,6 +66,7 @@ class JamCanvas extends React.Component {
       if (event.button === 1) return false;
       mouseDown = true;
       draw(event);
+      console.log(getStateProp("penColor"));
     }
 
     function exitDown(event) {
@@ -102,21 +95,7 @@ class JamCanvas extends React.Component {
     return (
       <div id="jamContainer">
         <div id="jamSideBar">
-          <div className="colorBox" id="mainColorBox" onClick={() => {
-            // Check if color picker is open or not
-            var colorPickerMenu = document.getElementById('colorPickerMenu');
-            if (this.state.colorPickerOpen === false) {
-              colorPickerMenu.style.visibility = "visible";
-              colorPickerMenu.style.animation = "openColorPicker 0.1s forwards";
-              this.setState({colorPickerOpen: true});
-            } else {
-              colorPickerMenu.style.animation = "closeColorPicker 0.1s forwards";
-              this.setState({colorPickerOpen: false});
-              setTimeout(() => {
-                colorPickerMenu.style.visibility = "hidden";
-              },100)
-            }
-          }}>
+          <div className="colorBox" id="mainColorBox">
 
           </div>
         </div>
