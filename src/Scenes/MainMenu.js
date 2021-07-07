@@ -3,6 +3,8 @@ import '../Styles/MainMenu.css';
 
 import CustomToggle from '../Components/CustomToggle';
 
+import { Menu, MenuController } from '../Division';
+
 class MainMenu extends React.Component {
   constructor(props) {
     super(props);
@@ -11,32 +13,47 @@ class MainMenu extends React.Component {
       setAppState: props.callbacks.setAppState,
       newAlert: props.callbacks.newAlert,
     }
-    this.currentMenu = "mainMenuPanel";
-    this.menuDepths = {
-      mainMenuPanel: 0,
-      createJamMenuPanel: 1
-    }
+  }
+  componentDidMount() {
+    this.menuController = new MenuController("mainMenuController", 
+      new Menu("mainMenuPanel").linkMenus({
+        createJamMenuPanel: "sub",
+        settingsMenuPanel: "sub"
+      })
+    ).addTransitions({
+      toParentMenu: "middle_to_right_fadeOut 0.2s forwards",
+      toSubMenu: "middle_to_left_fadeOut 0.2s forwards",
+      fromParentMenu: "right_to_middle_fadeIn 0.3s forwards",
+      fromSubMenu: "left_to_middle_fadeIn 0.3s forwards"
+    });
+
+    new Menu("createJamMenuPanel", this.menuController).linkMenu("parent", "mainMenuPanel");
+    new Menu("settingsMenuPanel_appearance", this.menuController).linkMenu('parent', "settingsMenuPanel");
+    new Menu("settingsMenuPanel", this.menuController).linkMenus({
+      mainMenuPanel: "parent",
+      settingsMenuPanel_appearance: "sub"
+    });
   }
   render() {
     return (
       <div className="mainMenu">
+        {/* Main Menu */}
         <div className="menuPanel" id="mainMenuPanel">
-          <button className="mainMenuButton" onClick={() => this.changeMenu("createJamMenuPanel", "mainMenuPanel")}>
+          <button className="menuButton" onClick={() => this.menuController.gotoMenu("createJamMenuPanel")}>
             Create Jam
           </button>
-          <button className="mainMenuButton" onClick={() => {
+          <button className="menuButton" onClick={() => {
             this.state.newAlert("joinJamButtonPress", "Join Jam", `Multiplayer jams are not implemented yet!`, 5, "info")
           }}>
             Join Jam
           </button>
-          <button className="mainMenuButton" onClick={() => {
-            this.state.newAlert("settingsButtonPress", "Settings", `The settings menu is not implemented yet!`, 5, "info")
-          }}>
+          <button className="menuButton" onClick={() => this.state.newAlert("settingsButtonPress", "Settings", `The settings menu is not implemented yet!`, 5, "info")}>
             Settings
           </button>
         </div>
-        <div className="menuPanel" id="createJamMenuPanel">
-          <p id="mainMenuBack" onClick={() => this.changeMenu("mainMenuPanel", "createJamMenuPanel")}>Back</p>
+        {/* Jam Menus */}
+        <div className="subMenuPanel" id="createJamMenuPanel">
+          <p className="menuBackText" onClick={() => this.menuController.gotoMenu("mainMenuPanel")}>Back</p>
           <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false" autoComplete="off"></input>
           <CustomToggle name="Limited Color Pallet"/>
           <CustomToggle name="Tiled"/>
@@ -45,30 +62,17 @@ class MainMenu extends React.Component {
           <h6 id="jamMenuJamCode">Code: LMAOXD</h6>
           <button className="openJamButton" onClick={() => this.openJam()}>Open Jam</button>
         </div>
+        {/* Settings Menus */}
+        <div className="subMenuPanel" id="settingsMenuPanel">
+          <p className="menuBackText" onClick={() => this.menuController.gotoMenu("mainMenuPanel")}>Back</p>
+          <button className="menuButton" onClick={() => this.menuController.gotoMenu("settingsMenuPanel_appearance")}>Appearance</button>
+        </div>
+        <div className="subMenuPanel" id="settingsMenuPanel_appearance">
+          <p className="menuBackText" onClick={() => this.menuController.gotoMenu("settingsMenuPanel")}>Back</p>
+          <button className="menuButton">Font</button>
+        </div>
       </div>
     )
-  }
-  /**
-   * 
-   * @param {String} menu Menu ID
-   */
-  changeMenu(toMenu, fromMenu) {
-    console.log("test4");
-    if (this.menuDepths[toMenu] < this.menuDepths[fromMenu]) {
-      console.log("test");
-      var toMenuElement = document.getElementById(toMenu);
-      var fromMenuElement = document.getElementById(fromMenu);
-
-      toMenuElement.style.animation = "left_to_middle_fadeIn 0.3s forwards";
-      fromMenuElement.style.animation = "middle_to_right_fadeOut 0.2s forwards";
-    } else if (this.menuDepths[toMenu] > this.menuDepths[fromMenu]) {
-      console.log("test2");
-      var toMenuElement = document.getElementById(toMenu);
-      var fromMenuElement = document.getElementById(fromMenu);
-
-      toMenuElement.style.animation = "right_to_middle_fadeIn 0.3s forwards";
-      fromMenuElement.style.animation = "middle_to_left_fadeOut 0.2s forwards";
-    }
   }
   openJam() {
     var jamNameInput = document.getElementById("jamNameInput").value;

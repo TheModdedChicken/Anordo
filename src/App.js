@@ -3,7 +3,7 @@ import './App.css';
 
 /* Components */
 import JamCanvas from './Components/JamCanvas';
-import { SceneManager, Scene, AlertBoard, EventManager } from "./Division/index";
+import { SceneManager, Scene, AlertBoard, EventManager } from "./Division";
 
 /* Menus */
 import MainMenu from './Scenes/MainMenu';
@@ -13,13 +13,12 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      currentMenu: "mainMenu",
+      currentScene: "mainMenu",
       curJamName: ""
     }
     this.eventManager = new EventManager("mainEventManager").addEvents({
-      goto_mainMenu: () => {this.setState({currentMenu: "mainMenu"})},
-      goto_createJamMenu: () => {this.setState({currentMenu: "createJamMenu"})},
-      goto_jamCanvas: () => {this.setState({currentMenu: "jamCanvas"})}
+      goto_mainMenu: () => {this.setState({currentScene: "mainMenu"})},
+      goto_jamCanvas: () => {this.setState({currentScene: "jamCanvas"})}
     })
     this.setAppState = this.setAppState.bind(this);
     this.getAppState = this.getAppState.bind(this);
@@ -39,7 +38,7 @@ class App extends React.Component {
       newAlert: this.alertBoard.newAlert
     }
 
-    var appScenes = new SceneManager("appScenes").setScene(this.state.currentMenu);
+    var appScenes = new SceneManager("appScenes").setScene(this.state.currentScene);
     new Scene("mainMenu", "mainMenu", <MainMenu name="mainMenu" callbacks={callbackMethods} />, appScenes);
     new Scene("jamCanvas", "jamCanvas", <JamCanvas name="jamCanvas" callbacks={callbackMethods} />, appScenes);
 
