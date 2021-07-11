@@ -2,11 +2,13 @@ import React from 'react';
 import './App.css';
 
 /* Components */
-import JamCanvas from './Components/JamCanvas';
+import JamCanvas from './Scenes/JamCanvas';
 import { SceneManager, Scene, AlertBoard, EventManager } from "./Division";
 
 /* Menus */
 import MainMenu from './Scenes/MainMenu';
+
+import options from "./options.json";
 
 /* App */
 class App extends React.Component {
@@ -29,6 +31,9 @@ class App extends React.Component {
   componentDidMount() {
     if (window.location.href.indexOf("anordo.vercel.app") == -1 && window.location.href.indexOf("localhost") == -1) 
       this.alertBoard.newAlert("currentBuildNotification", "Application Build (Dev)", `You are using a development build of Anordo. ⠀⠀ This build may or may not contain application breaking bugs.`, 5, "warning");
+
+    if (localStorage.appFont) document.documentElement.style.setProperty("--appFont", localStorage.appFont);
+    if (!localStorage.serverAddress) localStorage.setItem("serverAddress", options.defaultServerAddress);
   }
   render() {
     const callbackMethods = {

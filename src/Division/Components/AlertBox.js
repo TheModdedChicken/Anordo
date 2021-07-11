@@ -23,7 +23,10 @@ class AlertBox extends React.Component {
     else if (type === "error") typeColor = "#ff3d3d";
 
     var alertBox = document.getElementById(this.state.id + "-alertBox");
-    if (this.state.callback) alertBox.addEventListener('click', this.state.callback);
+    alertBox.addEventListener('click', () => {
+      if (this.state.callback) this.state.callback();
+      this.state.boardCallbacks.dismissAlert(this.state.id);
+    });
 
     var alertTimeBar = document.getElementById(this.state.id + "-alertTimeBar");
     alertTimeBar.style.background = typeColor;

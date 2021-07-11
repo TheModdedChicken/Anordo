@@ -7,23 +7,26 @@ class CustomToggle extends React.Component {
     super(props);
     this.state = {
       name: props.name,
-      toggled: false,
-      id: props.name.split(" "),
-      switchId: props.name.split(" ") + "-switch",
-      capId: props.name.split(" ") + "-cap"
+      id: props.name.split(" ").join(""),
+      switchId: props.name.split(" ").join("") + "-switch",
+      capId: props.name.split(" ").join("") + "-cap",
+      onChange: props.onChange
     }
+    this.toggled = false;
   }
   render() {
     return (
       <div>
         <div className="toggleSwitch" id={this.state.switchId} onClick={() => {
-          this.updateToggle(this.state.id, this.state.toggled);
-          if (this.state.toggled) this.setState({toggled: false})
-          else this.setState({toggled: true});
+          this.updateToggle(this.state.id, this.toggled);
+          if (this.toggled === true) this.toggled = false;
+          else this.toggled = true;
+
+          if (this.state.onChange) this.state.onChange(this.toggled);
         }}>
           <div className="toggleSwitchCap" id={this.state.capId}></div>
         </div>
-        <h6 className="toggleOption">{this.state.name}</h6>
+        <h6 className="customOption">{this.state.name}</h6>
       </div>
     )
   }

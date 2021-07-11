@@ -19,6 +19,8 @@ class MenuController {
     if (mainMenu) this.menus = {[mainMenu.id]: mainMenu};
     else this.menus = {};
 
+    this.history = [];
+
     this.addMenus = this.addMenus.bind(this);
     this.addMenu = this.addMenu.bind(this);
     this.removeMenu = this.removeMenu.bind(this);
@@ -67,7 +69,7 @@ class MenuController {
   }
   /**
    * 
-   * @param {String} id ID of transition
+   * @param {"toParentMenu" | "toSubMenu" | "fromParentMenu" | "fromSubMenu"} id ID of transition
    * @param {String} animation CSS Animation
    * @param {Function} callback Callback of transition
    */
@@ -116,17 +118,25 @@ class MenuController {
 
     if (this.currentMenu) {
       if (this.menus[this.currentMenu].parentMenus.includes(menuID)) {
-        this.menus[this.currentMenu].element.style.animation = curAvailTransitions.toParentMenu;
-        this.menus[menuID].element.style.animation = curAvailTransitions.fromSubMenu;
+        this.menus[this.currentMenu].element.style.animation = curAvailTransitions.toParentMenu.animation;
+        if (curAvailTransitions.toParentMenu.callback) curAvailTransitions.toParentMenu.callback();
+
+        this.menus[menuID].element.style.animation = curAvailTransitions.fromSubMenu.animation;
+        if (curAvailTransitions.fromSubMenu.callback) curAvailTransitions.fromSubMenu.callback();
       } else if (this.menus[this.currentMenu].subMenus.includes(menuID)) {
-        this.menus[this.currentMenu].element.style.animation = curAvailTransitions.toSubMenu;
-        this.menus[menuID].element.style.animation = curAvailTransitions.fromParentMenu;
+        this.menus[this.currentMenu].element.style.animation = curAvailTransitions.toSubMenu.animation;
+        if (curAvailTransitions.toSubMenu.callback) curAvailTransitions.toSubMenu.callback();
+
+        this.menus[menuID].element.style.animation = curAvailTransitions.fromParentMenu.animation;
+        if (curAvailTransitions.fromParentMenu.callback) curAvailTransitions.fromParentMenu.callback();
       }
     } else {
-      this.menus[menuID].element.style.animation = curAvailTransitions.fromSubMenu;
+      this.menus[menuID].element.style.animation = curAvailTransitions.fromSubMenu.animation;
+      if (curAvailTransitions.fromSubMenu.callback) curAvailTransitions.fromSubMenu.callback();
     }
 
     this.currentMenu = menuID;
+    this.history.push(menuID);
     return this;
   }
 }

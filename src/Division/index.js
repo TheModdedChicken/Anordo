@@ -6,6 +6,7 @@ import EventManager from "./Classes/EventManager";
 import AnimationController from "./Classes/AnimationController";
 import MenuController from "./Classes/MenuController";
 import Menu from "./Classes/Menu";
+import { appendArgsToJSON } from "./Functions/dynJSON";
 
 export { 
   Scene, 
@@ -14,5 +15,6 @@ export {
   EventManager, 
   AnimationController, 
   Menu, 
-  MenuController 
+  MenuController,
+  appendArgsToJSON
 }

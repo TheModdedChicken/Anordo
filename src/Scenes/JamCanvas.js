@@ -1,10 +1,11 @@
 import React, { createRef } from 'react';
-import { evalProp } from './extras';
-import ColorPicker from './ColorPicker';
+import ColorPicker from '../Components/ColorPicker';
 
 import { AnimationController } from '../Division';
+import ClientConnection from '../api/peer';
 
 import '../App.css';
+import { editJam } from '../api/rest';
 
 class JamCanvas extends React.Component {
   constructor(props) {
@@ -13,14 +14,25 @@ class JamCanvas extends React.Component {
       callEvent: props.callbacks.callEvent,
       setAppState: props.callbacks.setAppState,
       getAppState: props.callbacks.getAppState,
+      authorization: props.auth,
       penColor: "rgba(0,0,0,255)",
       penWidth: 6,
       colorPickerOpen: false
     }
+    this.cc = new ClientConnection();
     this.canvasRef = createRef(null);
     this.setProp = this.setProp.bind(this);
+
+    this.clients = {
+      host: null,
+      peers: []
+    };
   }
-  componentDidMount() {
+  async componentDidMount() {
+    this.cc.peer.on("open", () => {
+      this.cc.sendData("host", "wow");
+    })
+
     var canvas = this.canvasRef.current;
     var ctx = canvas.getContext("2d");
 
