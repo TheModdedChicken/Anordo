@@ -76,8 +76,6 @@ function appendArgsToJSON (argArray) {
   return outGoingJSON;
 }
 
-module.exports.appendArgsToJSON = appendArgsToJSON;
-
 
 /* Local Functions */
 
