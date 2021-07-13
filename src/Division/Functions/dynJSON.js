@@ -134,3 +134,5 @@ function checkJSONStage2(valueOfElement) {
       return valueOfElement;
   }
 }
+
+export { appendArgsToJSON };
