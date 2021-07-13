@@ -34,6 +34,9 @@ class App extends React.Component {
 
     if (localStorage.appFont) document.documentElement.style.setProperty("--appFont", localStorage.appFont);
     if (!localStorage.serverAddress) localStorage.setItem("serverAddress", options.defaultServerAddress);
+    if (localStorage.offlineMode === undefined || localStorage.offlineMode === null) localStorage.setItem("offlineMode", false);
+
+    console.log(localStorage.offlineMode)
   }
   render() {
     const callbackMethods = {

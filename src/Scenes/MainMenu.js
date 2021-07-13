@@ -7,7 +7,7 @@ import CustomDropdown from '../Components/CustomDropdown';
 import CustomInput from '../Components/CustomInput';
 import CustomToggle from '../Components/CustomToggle';
 
-import { createJam, editJam, listJams } from '../api/rest';
+import { createJam, editJam, getJam, listJams } from '../api/rest';
 
 class MainMenu extends React.Component {
   constructor(props) {
@@ -68,20 +68,24 @@ class MainMenu extends React.Component {
   
             jamInfoBox.append(jamInfoBoxTitle, jamInfoBoxDescription);
             publicJamList.appendChild(jamInfoBox);
+
+            if (jamlist === false) {
+              this.state.newAlert(
+                "connectionIssue-joinJam", 
+                "Join Jam", 
+                "Anordo is having issues getting jam information from the server. Please check your internet connection and try again.", 
+                10, 
+                "error"
+              );
+              return;
+            }
           }
   
           for (const jam of jamlist) {
             var jamInfoBox = document.createElement("div");
             jamInfoBox.className = "jamInfoBox";
             jamInfoBox.addEventListener('click', () => {
-              this.joinJam(jam.id, {
-                name: jam.name,
-                description: jam.description,
-                hostID: jam.hostID,
-                width: jam.width,
-                height: jam.height,
-                public: jam.public
-              })
+              this.joinJam(jam.id);
             })
   
             var jamInfoBoxTitle = document.createElement("h1");
@@ -119,9 +123,24 @@ class MainMenu extends React.Component {
         <div className="menuPanel" id="mainMenuPanel">
           <button className="menuButton" onClick={async () => {
             var jamMenuJamCode = document.getElementById("jamMenuJamCode");
+            if (localStorage.offlineMode === false) {
+              const serverRes = await createJam();
+              if (serverRes === false) {
+                this.state.newAlert(
+                  "connectionIssue-createJam", 
+                  "Create Jam", 
+                  "Anordo is having issues sending jam information to the server. Please check your internet connection and try again.", 
+                  10, 
+                  "error"
+                );
+                return;
+              };
+              this.jamData = serverRes;
+              jamMenuJamCode.textContent = `ID: ${this.jamData.jamID}`;
+            } else {
+              jamMenuJamCode.textContent = `ID: Offline`;
+            }
             this.menuController.gotoMenu("createJamMenuPanel");
-            this.jamData = await createJam();
-            jamMenuJamCode.textContent = `ID: ${this.jamData.jamID}`;
           }}>
             Create Jam
           </button>
@@ -140,10 +159,13 @@ class MainMenu extends React.Component {
             <div className="menuTitle">Create Jam</div>
           </div>
           <input id="jamNameInput" placeholder="Jam Name" type="text" maxLength="30" spellCheck="false" autoComplete="off"></input>
-          <CustomToggle name="Public" onChange={(state) => { 
-            console.log(state);
-            editJam(`${this.jamData.jamID} ${this.jamData.hostKey}`, {public: state})
-          }}></CustomToggle>
+          <div className="jamSetup-sizeInput">
+            <h6>Width</h6>
+            <input id="jamSetup-widthInput" placeholder="500" type="text" maxLength="5" spellCheck="false" autoComplete="off"></input>
+            <input id="jamSetup-heightInput" placeholder="500" type="text" maxLength="5" spellCheck="false" autoComplete="off"></input>
+            <h6>Height</h6>
+          </div>
+          <CustomToggle name="Public" onChange={(state) => editJam(`${this.jamData.jamID} ${this.jamData.hostKey}`, {public: state})}></CustomToggle>
           <h6 id="jamMenuJamCode">ID: LMAOXD</h6>
           <button className="openJamButton" onClick={() => this.openJam()}>Open Jam</button>
         </div>
@@ -193,6 +215,7 @@ class MainMenu extends React.Component {
             <button className="menuBackButton" onClick={() => this.menuController.gotoMenu("settingsMenuPanel_advanced")}></button>
             <div className="menuTitle">Connections</div>
           </div>
+          <CustomToggle name="Offline" onChange={(state) => localStorage.offlineMode = state}></CustomToggle>
           <CustomInput name="Server" placeholder="https://example.com" value={localStorage.serverAddress ? localStorage.serverAddress : options.defaultServerAddress} onChange={(address) => {
             localStorage.setItem("serverAddress", address);
           }}></CustomInput>
@@ -216,29 +239,63 @@ class MainMenu extends React.Component {
   }
   async openJam() {
     var jamNameInput = document.getElementById("jamNameInput").value;
+    var width = document.getElementById("jamSetup-widthInput").value !== "" ? document.getElementById("jamSetup-widthInput").value : 500;
+    var height = document.getElementById("jamSetup-heightInput").value !== "" ? document.getElementById("jamSetup-heightInput").value : 500;
 
-    var editedJam = await editJam(`${this.jamData.jamID} ${this.jamData.hostKey}`, jamNameInput ? { name: jamNameInput } : {});
-
-    if (jamNameInput === "") this.state.newAlert("jamNameInput", "Jam Name", `No jam name specified, using ${editedJam.name} as filler.`, 15, "warning");
-    this.state.setAppState("curJamName", editedJam.name);
-
-    localStorage.setItem("latestJam", JSON.stringify({
-      authorization: {
-        jamID: this.jamData.jamID,
-        hostKey: this.jamData.hostKey,
-      },
-      jamInfo: editedJam
-    }))
+    if (localStorage.offlineMode === false) {
+      const editedJam = await editJam(`${this.jamData.jamID} ${this.jamData.hostKey}`, jamNameInput ? { name: jamNameInput, width: width, height: height } : { width: width, height: height });
+      if (editedJam === false) {
+        this.state.newAlert(
+          "connectionIssue-openJam", 
+          "Open Jam", 
+          "Anordo is having issues connecting to the server. Please check your internet connection and try again.", 
+          10, 
+          "error"
+        );
+        return;
+      };
+  
+      if (jamNameInput === "") this.state.newAlert("jamNameInput", "Jam Name", `No jam name specified, using ${editedJam.name} as filler.`, 15, "warning");
+      this.state.setAppState("curJamName", editedJam.name);
+  
+      localStorage.setItem("latestJam", JSON.stringify({
+        clientType: "host",
+        authorization: this.jamData.hostKey,
+        jamInfo: editedJam
+      }))
+    }
 
     this.state.callEvent("goto_jamCanvas");
   }
-  joinJam(jamID, jamInfo) {
-    localStorage.setItem("latestJam", JSON.stringify({
-      authorization: {
-        jamID: jamID,
-      },
-      jamInfo: jamInfo
-    }))
+  async joinJam(jamID) {
+    const serverRes = await getJam(jamID);
+    if (serverRes === false) {
+      this.state.newAlert(
+        "connectionIssue-joinJam", 
+        "Join Jam", 
+        "Anordo is having issues getting jam information from the server. Please check your internet connection and try again.", 
+        10, 
+        "error"
+      );
+      return;
+    };
+
+    const authTest = JSON.parse(localStorage.getItem("latestJam")) ?
+    await editJam(`${jamID} ${JSON.parse(localStorage.getItem("latestJam")).authorization}`) : false;
+
+    console.log(authTest);
+    if (authTest !== false) {
+      localStorage.setItem("latestJam", JSON.stringify({
+        clientType: "host",
+        authorization: JSON.parse(localStorage.getItem("latestJam")).authorization,
+        jamInfo: authTest
+      }))
+    } else {
+      localStorage.setItem("latestJam", JSON.stringify({
+        clientType: "peer",
+        jamInfo: serverRes
+      }))
+    }
 
     this.state.callEvent("goto_jamCanvas");
   }

@@ -145,8 +145,29 @@ input {
 
 /* Jam Canvas */
 
+.jamCanv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+
+  transform: translateX(75px);
+}
+
+.peerCanv {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  transform: translateX(75px);
+}
+
 #jamSideBar {
-  position: fixed;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 75px;
   height: 100%;
 
@@ -155,6 +176,8 @@ input {
   border-radius: 0 10px 10px 0;
 
   box-shadow: 0px 3px 8px #888888;
+
+  z-index: 3;
 }
 
 .colorBox {
@@ -191,6 +214,8 @@ input {
   border-radius: 10px;
 
   padding: 20px 20px 15px 20px;
+
+  z-index: 2;
 }
 
 #colorChangers {

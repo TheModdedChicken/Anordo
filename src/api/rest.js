@@ -1,17 +1,22 @@
 import { getServerAddress } from "../Components/extras";
 
 async function createJam(body = {}) {
-  console.log(getServerAddress() + "jam/create")
-  const response = await fetch(getServerAddress() + "jam/create", {
-    method: "post", 
-    headers: { 
-      "Content-Type": "application/json",
-      'Accept': 'application/json'
-    },
-    body: JSON.stringify(body)
-  });
-
-  return response.json();
+  try {
+    console.log(getServerAddress() + "jam/create")
+    const response = await fetch(getServerAddress() + "jam/create", {
+      method: "post", 
+      headers: { 
+        "Content-Type": "application/json",
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+  
+    if (response.status !== 200) return false;
+    return response.json();
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -21,22 +26,32 @@ async function createJam(body = {}) {
  * @returns 
  */
 async function editJam(authorization, body = {}) {
-  const response = await fetch(getServerAddress() + "jam/edit", {
-    method: "POST", 
-    headers: { 
-      "Content-Type": "application/json", 
-      "authorization": authorization, 
-    }, 
-    body: JSON.stringify(body)
-  })
-  return response.json();
+  try {
+    const response = await fetch(getServerAddress() + "jam/edit", {
+      method: "POST", 
+      headers: { 
+        "Content-Type": "application/json", 
+        "authorization": authorization, 
+      }, 
+      body: JSON.stringify(body)
+    })
+    if (response.status !== 200) return false;
+    return response.json();
+  } catch {
+    return false;
+  }
 }
 
 async function listJams() {
-  const response = await fetch(getServerAddress() + "jam/list", {
-    method: "GET",
-  })
-  return response.json();
+  try {
+    const response = await fetch(getServerAddress() + "jam/list", {
+      method: "GET",
+    })
+    if (response.status !== 200) return false;
+    return response.json();
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -45,13 +60,18 @@ async function listJams() {
  * @returns 
  */
 async function getJam(jamID) {
-  const response = await fetch(getServerAddress() + "jam/get", {
-    method: "GET",
-    headers: {
-      "authorization": jamID
-    }
-  })
-  return response.json();
+  try {
+    const response = await fetch(getServerAddress() + "jam/get", {
+      method: "GET",
+      headers: {
+        "authorization": jamID
+      }
+    })
+    if (response.status !== 200) return false;
+    return response.json();
+  } catch {
+    return false;
+  }
 }
 
 export { createJam, editJam, listJams, getJam }
